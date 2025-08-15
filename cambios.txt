@@ -1,0 +1,172 @@
+curso.java
+package com.example.Examen1Back2.modelos;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+@Entity
+public class Curso {
+
+    @I
+    @Ge(strategy = IDENTITY)
+    private Integer id;
+    private String nombre
+
+    @ManyToOne
+    @JoinColumn(name="fk_docente", referencedColumnName = "id");
+    @JsonBackReference(value = "docente-curso")
+    Docente docente
+
+    public Curso() {
+    }
+
+    public Curso(Integer id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+
+}
+-----------------------------------------------------------------------
+Archivo: Curso.java
+
+Línea 8:
+- Estaba @I, lo cambié por @Id porque esa es la anotación correcta para indicar el identificador.
+
+Línea 9:
+- Tenía @Ge(strategy = IDENTITY), lo cambié por @GeneratedValue(strategy = GenerationType.IDENTITY) que es la forma correcta.
+
+Línea 11:
+- Al atributo nombre le faltaba el punto y coma al final, se lo agregué.
+
+Línea 14:
+- En la anotación @JoinColumn le quité un punto y coma que estaba de más para que compile bien.
+
+Línea 16:
+- A la variable docente le faltaba el punto y coma al final, se lo puse.
+
+General:
+- Agregué @Table(name = "curso") para que el nombre de la tabla quede definido.
+- Le añadí getters y setters a todos los atributos.
+- Dejé el constructor vacío y el que recibe parámetros.
+//////////////////////////////////////////////////////////////////////////
+
+docente.java
+
+package com.example.Examen1Back2.modelos;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+
+import java.util.List;
+
+@Entit
+public class Docente {
+
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+
+    private  String especialidad;
+
+    @OneToMany(mappedBy = "docente")
+    @JsonManagedReference(value = "docente-curso")
+    private List<Curso> cursos;
+
+    @OneToOne
+    @JoinColumn(name = "fk_usuario", referencedColumnName = "id_usuario")
+    @JsonManagedReference(value = "docente-usuario")
+    private Usuario usuario;
+
+
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getEspecialidad() {
+        return especialidad;
+    }
+
+    public void setEspecialidad(String especialidad) {
+        this.especialidad = especialidad;
+    }
+}
+---------------------------------------------------------------------------
+Línea 9:
+- Estaba @Entit, lo cambié por @Entity para que se reconozca como entidad JPA.
+
+Línea 14:
+- Faltaba la anotación @Id en el atributo id, se la agregué antes de @GeneratedValue.
+
+General:
+- Agregué @Table(name = "docente") para que el nombre de la tabla quede definido en la base de datos.
+- Agregué constructor vacío y otro con parámetros para facilitar la creación de objetos.
+- Añadí getters y setters para los atributos cursos y usuario, que no estaban.
+
+////////////////////////////////////////////////////////////////////////
+package com.example.Examen1Back2.modelos;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+
+@Entit
+@Table(name = "usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.)
+    @Colun(name = "id_usuario")
+    private Integer id;
+
+    @Column(nullable = false, length = 100)
+    private String nombre;
+
+    @Colun(name = "correo_electronico", unique = true)
+    private String correoElectronico;
+    private String contraseña;
+    private String telefono;
+
+    @Enumerated(EnumType.STRING)
+    private TipoUsuario tipoUsuario;
+
+    //Estableciendo la relacion uno a uno con la tabla docente
+    @OneToOne(mappedBy = "usuario")
+    @JsonBackReference(value = "docente-usuario")
+    private Docente docente;
+
+    public Usuario() {
+    }
+
+    public Usuario(Integer id, String nombre, String correoElectronico, String contraseña, String telefono, TipoUsuario tipoUsuario) {
+        this.id = id;
+        this.nombre = nombre;
+        this.correoElectronico = correoElectronico;
+        this.contraseña = contraseña;
+        this.telefono = telefono;
+        this.tipoUsuario = tipoUsuario;
+    }
+
+------------------------------------------------------------------------------
+
+Archivo: Usuario.java
+
+Línea 7:
+- Estaba @Entit, lo cambié por @Entity para que sea reconocido como entidad JPA.
+
+Línea 10:
+- En @GeneratedValue estaba incompleto, lo corregí a @GeneratedValue(strategy = GenerationType.IDENTITY).
+
+Línea 11:
+- Tenía @Colun mal escrito, lo corregí a @Column.
+
+Línea 15:
+- En la anotación del correo también estaba mal escrita como @Colun, la corregí a @Column.
+
+General:
+- Revisé y confirmé que la relación @OneToOne con Docente estaba correcta.
+- Agregué getters y setters para todos los atributos.
+- Mantuve el constructor vacío y el constructor con parámetros.
+
